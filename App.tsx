@@ -127,7 +127,26 @@ const App = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center"><Heart className="w-6 h-6 text-white" /></div>
+              <div className="grid grid-cols-2 gap-4">
+  {[
+    "/assets/images/foto1.jpeg",
+    "/assets/images/foto2.jpeg",
+    "/assets/images/foto3.jpeg",
+    "/assets/images/foto4.jpeg",
+  ].map((src, idx) => (
+    <div
+      key={idx}
+      className="aspect-square rounded-lg overflow-hidden shadow-sm bg-gray-100"
+    >
+      <img
+        src={src}
+        alt={`Foto ${idx + 1}`}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </div>
+  ))}
+</div>
               <div>
                 <h1 className="text-xl font-bold text-gray-800">IBGP</h1>
                 <p className="text-xs text-gray-600">VI Festa da Família</p>
