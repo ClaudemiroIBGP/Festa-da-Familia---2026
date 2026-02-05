@@ -130,14 +130,10 @@ const App = () => {
 
   const totalAmount = calculateTotal();
 
-  // ✅ Caminho seguro para Vite + GitHub Pages
-  const base = import.meta.env.BASE_URL;
-  const aboutImages = [
-    `${base}assets/images/foto1.jpeg`,
-    `${base}assets/images/foto2.jpeg`,
-    `${base}assets/images/foto3.jpeg`,
-    `${base}assets/images/foto4.jpeg`,
-  ];
+import f1 from "./assets/images/foto1.jpeg";
+import f2 from "./assets/images/foto2.jpeg";
+import f3 from "./assets/images/foto3.jpeg";
+import f4 from "./assets/images/foto4.jpeg";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
