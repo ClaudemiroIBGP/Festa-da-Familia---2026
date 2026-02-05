@@ -1,5 +1,9 @@
-export interface Participant {
+export type TicketType = 'adult' | 'child_6_10' | 'child_0_5';
+
+export interface Registration {
+  id: string;
   name: string;
-  ticketType: 'adult' | 'child' | 'free';
   phone: string;
+  ticketType: TicketType;
+  createdAt: string; // ISO
 }
