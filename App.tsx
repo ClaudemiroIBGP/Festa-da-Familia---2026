@@ -32,11 +32,12 @@ async function sendRegistrationToEndpoint(payload: Registration): Promise<void> 
   // Se você ainda não configurou, não quebra a tela; salva só localmente.
   if (!endpoint) return;
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload),
-  });
+  const res = await fetch(import.meta.env.VITE_FORM_ENDPOINT, {
+  method: "POST",
+  headers: { "Content-Type": "text/plain;charset=utf-8" },
+  body: JSON.stringify(payload),
+});
+
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
