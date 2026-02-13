@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { MapPin, Heart, Sun, Map, Trophy, Waves, Volleyball, Plus, Trash2, CheckCircle } from 'lucide-react';
-import type { Registration, TicketType } from './types';
+import type { Registration, PaymentType } from './types';
 
 // ✅ Fotos (Vite empacota via import; funciona no GitHub Pages)
 import f1 from './assets/images/foto1.jpeg';
@@ -10,16 +10,11 @@ import f4 from './assets/images/foto4.jpeg';
 
 type SectionId = 'hero' | 'about' | 'activities' | 'registration';
 
-const TICKET_LABEL: Record<TicketType, string> = {
-  adult: 'Adultos e crianças acima de 10 anos (R$ 100,00)',
-  child_6_10: 'Crianças de 6 a 10 anos (R$ 50,00)',
-  child_0_5: 'Crianças até 5 anos (Grátis)',
-};
-
-const TICKET_PRICE: Record<TicketType, number> = {
-  adult: 100,
-  child_6_10: 50,
-  child_0_5: 0,
+const PAYMENT_LABEL: Record<Exclude<PaymentType,''>, string> = {
+  PIX: 'PIX',
+  'Cartão': 'Cartão',
+  Dinheiro: 'Dinheiro',
+  Outro: 'Outro',
 };
 
 function currencyBRL(value: number): string {
@@ -39,7 +34,7 @@ async function sendRegistrationToEndpoint(payload: Registration): Promise<void> 
 
   const res = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload),
   });
 
@@ -74,20 +69,15 @@ export default function App() {
   ] as const;
 
   const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const [form, setForm] = useState<{ name: string; phone: string; ticketType: TicketType | '' }>({
+  const [form, setForm] = useState<{ name: string; phone: string; paymentType: PaymentType | '' }>({
     name: '',
     phone: '',
-    ticketType: '',
+    paymentType: '',
   });
 
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [sendOk, setSendOk] = useState<string | null>(null);
-
-  const totalAmount = useMemo(
-    () => registrations.reduce((acc, r) => acc + TICKET_PRICE[r.ticketType], 0),
-    [registrations]
-  );
 
   const addRegistration = async () => {
     setSendError(null);
@@ -95,23 +85,23 @@ export default function App() {
 
     const name = form.name.trim();
     const phone = form.phone.trim();
-    const ticketType = form.ticketType;
+    const paymentType = form.paymentType;
 
     if (!name) return setSendError('Informe o nome.');
     if (!phone) return setSendError('Informe um telefone/WhatsApp.');
-    if (!ticketType) return setSendError('Selecione o tipo de ingresso.');
+    if (!paymentType) return setSendError('Selecione o tipo de pagamento.');
 
     const payload: Registration = {
       id: crypto.randomUUID(),
       name,
       phone,
-      ticketType,
+      paymentType,
       createdAt: new Date().toISOString(),
     };
 
     // Salva localmente primeiro (boa UX)
     setRegistrations((prev) => [payload, ...prev]);
-    setForm({ name: '', phone: '', ticketType: '' });
+    setForm({ name: '', phone: '', paymentType: '' });
 
     // Envia para endpoint (se configurado)
     setIsSending(true);
@@ -293,16 +283,17 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium">Tipo de ingresso</label>
+                  <label className="text-sm font-medium">Tipo de pagamento</label>
                   <select
-                    value={form.ticketType}
-                    onChange={(e) => setForm((p) => ({ ...p, ticketType: e.target.value as TicketType }))}
+                    value={form.paymentType}
+                    onChange={(e) => setForm((p) => ({ ...p, paymentType: e.target.value as PaymentType }))}
                     className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2"
                   >
                     <option value="">Selecione</option>
-                    <option value="adult">{TICKET_LABEL.adult}</option>
-                    <option value="child_6_10">{TICKET_LABEL.child_6_10}</option>
-                    <option value="child_0_5">{TICKET_LABEL.child_0_5}</option>
+                    <option value="PIX">{PAYMENT_LABEL.PIX}</option>
+                    <option value="Cartão">{PAYMENT_LABEL['Cartão']}</option>
+                    <option value="Dinheiro">{PAYMENT_LABEL.Dinheiro}</option>
+                    <option value="Outro">{PAYMENT_LABEL.Outro}</option>
                   </select>
                 </div>
 
@@ -330,9 +321,6 @@ export default function App() {
             <div className="rounded-xl border border-gray-200 p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="font-semibold">Inscrições (local)</div>
-                <div className="text-sm text-gray-600">
-                  Total: <span className="font-semibold">{currencyBRL(totalAmount)}</span>
-                </div>
               </div>
 
               <div className="mt-4 space-y-3">
@@ -343,7 +331,7 @@ export default function App() {
                     <div>
                       <div className="font-medium">{r.name}</div>
                       <div className="text-xs text-gray-600">
-                        {r.phone} • {TICKET_LABEL[r.ticketType]}
+                        {r.phone} • {r.paymentType || '-'}
                       </div>
                     </div>
 
