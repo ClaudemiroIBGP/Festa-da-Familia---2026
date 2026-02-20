@@ -24,7 +24,7 @@ function currencyBRL(value: number): string {
 /**
  * Envia uma inscrição para um endpoint (ex.: Google Apps Script / Formspree / webhook).
  * Configure em .env.local:
- *   VITE_FORM_ENDPOINT="https://...."
+ *   VITE_FORM_ENDPOINT="https://script.google.com/macros/s/AKfycbwZImn5Rtu4MYie0-YCcU_NF7_8re_OirKck2z2uYgwefqNfkOuiYBcIE5Q795e_ila/exec"
  */
 async function sendRegistrationToEndpoint(payload: Registration): Promise<void> {
   const endpoint = import.meta.env.VITE_FORM_ENDPOINT as string | undefined;
